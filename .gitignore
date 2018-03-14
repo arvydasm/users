@@ -2,3 +2,4 @@
 /.idea/
 /target/
 /users.iml
+!/target/users-1.0.jar
