@@ -1,7 +1,10 @@
 package lt.devopspro.controller;
 
 
+import lt.devopspro.model.LoginForm;
+import lt.devopspro.model.SignUpResponse;
 import lt.devopspro.model.User;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,12 +16,55 @@ import java.util.List;
 public class AppRestController {
 
     public static List<User> usersList = new ArrayList<>();
+    public static int ids = 0;
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public void signup(User user) {
-        usersList.forEach();
+    public SignUpResponse signup(@RequestBody User user) {
+
+        if (user.getUserName().isEmpty()) {
+            return new SignUpResponse(SignUpResponse.ResponseStatus.ERROR, "Fill username");
+        }
+
+        if (user.getPassword().isEmpty()) {
+            return new SignUpResponse(SignUpResponse.ResponseStatus.ERROR, "Fill password");
+        }
+
+        if (user.getFirstName().isEmpty()) {
+            return new SignUpResponse(SignUpResponse.ResponseStatus.ERROR, "Fill Firsat Name");
+        }
+
+        if (user.getLastName().isEmpty()) {
+            return new SignUpResponse(SignUpResponse.ResponseStatus.ERROR, "Fill Last name");
+        }
+
+        if (user.getEmail().isEmpty()) {
+            return new SignUpResponse(SignUpResponse.ResponseStatus.ERROR, "Fill email");
+        }
+
+        for (User u: usersList) {
+            if (u.getUserName().equals(user.getUserName())) {
+                return new SignUpResponse(SignUpResponse.ResponseStatus.ERROR, "Username allready in use");
+            }
+        }
+
+        usersList.add(new User(ids++, user.getUserName(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getEmail()));
+
+        return new SignUpResponse(SignUpResponse.ResponseStatus.OK, "");
     }
 
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public User login(@RequestBody LoginForm loginForm) {
+        User usr = null;
+        for (User u: usersList) {
+            if (u.getUserName().equals(loginForm.getUserName())) {
+                if (u.getPassword().equals(loginForm.getPassword())) {
+                    usr = new User(u.getId(), u.getUserName(), null, u.getFirstName(), u.getLastName(), u.getEmail());
+                    break;
+                }
+            }
+        }
 
+        return usr;
+    }
 
 }
