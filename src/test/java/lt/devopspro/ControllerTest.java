@@ -2,6 +2,7 @@ package lt.devopspro;
 
 
 import lt.devopspro.model.LoginForm;
+import lt.devopspro.model.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class ControllerTest {
 
     @Test
     public void postSignUp() throws Exception {
-
+        User user4 = new User(null, "Tom4", "test123", "Tom4", "Don4", "tom@4don.com");
         mvc.perform(MockMvcRequestBuilders.post("/signup").accept(MediaType.APPLICATION_JSON));
     }
 
