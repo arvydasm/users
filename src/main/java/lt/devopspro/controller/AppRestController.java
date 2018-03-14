@@ -66,7 +66,7 @@ public class AppRestController {
 
         usersList.add(new User(ids++, user.getUserName(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getEmail()));
 
-        return new SignUpResponse(SignUpResponse.ResponseStatus.OK, "");
+        return new SignUpResponse(SignUpResponse.ResponseStatus.OK, String.valueOf(ids));
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)

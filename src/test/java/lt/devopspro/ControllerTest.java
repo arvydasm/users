@@ -1,6 +1,11 @@
 package lt.devopspro;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.devopspro.model.LoginForm;
 import lt.devopspro.model.User;
 import org.junit.Test;
@@ -21,20 +26,34 @@ public class ControllerTest {
     @Autowired
     private MockMvc mvc;
 
-
-
     @Test
     public void postSignUp() throws Exception {
-        User user4 = new User(null, "Tom4", "test123", "Tom4", "Don4", "tom@4don.com");
-        mvc.perform(MockMvcRequestBuilders.post("/signup").accept(MediaType.APPLICATION_JSON));
+        User user = new User(null, "Tom5", "test123", "Tom5", "Don5", "tom@5don.com");
+        mvc.perform(MockMvcRequestBuilders.post("/signup", user)
+                .contentType(MediaType.APPLICATION_JSON).content(asJsonString(user))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(equalTo("{\"status\":\"OK\",\"message\":\"5\"}")));
+    }
+
+    @Test
+    public void postSignUp2() throws Exception {
+        User user = new User(null, "Tom4", "test123", "Tom4", "Don4", "tom@4don.com");
+        mvc.perform(MockMvcRequestBuilders.post("/signup")
+                .contentType(MediaType.APPLICATION_JSON).content(asJsonString(user))
+                .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+                .andExpect(content().string(equalTo("{\"status\":\"ERROR\",\"message\":\"Username allready in use\"}")));
     }
 
     @Test
     public void postLogin() throws Exception {
 
-        LoginForm loginForm = new LoginForm("user", "123456");
+        LoginForm loginForm = new LoginForm("Tom4", "test123");
 
-        mvc.perform(MockMvcRequestBuilders.post("/login", loginForm).accept(MediaType.APPLICATION_JSON));
+        mvc.perform(MockMvcRequestBuilders.post("/login")
+                .contentType(MediaType.APPLICATION_JSON).content(asJsonString(loginForm))
+                .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+                .andExpect(content().string(equalTo("{\"id\":3,\"userName\":\"Tom4\",\"password\":null,\"firstName\":\"Tom4\",\"lastName\":\"Don4\",\"email\":\"tom@4don.com\"}")));
 
     }
     public static String asJsonString(final Object obj) {
